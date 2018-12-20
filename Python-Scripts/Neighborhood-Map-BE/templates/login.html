@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% import 'macros.html' as macros %} 
+{% block content %}
+
+<div class="col-md-4 col-md-offset-4">
+
+      <div align="center">
+        <h2>Neighborhood Map</h2>
+      </div>
+
+<hr>
+
+<h3>Please log in</h3>
+
+<form method="post" action=""  id="db_post" name="db_post">
+
+      {{ form2.hidden_tag() }} 
+
+    {{ macros.render_field(form2.username, placeholder='Enter Username', type='username', label_visible=true) }}
+    {{ macros.render_field(form2.password, placeholder='Enter Password', type='password', label_visible=true)}}  
+    
+    <div align="center"><button type="submit" class="btn btn-primary">Log In</button></p></div>
+</form>  
+  
+<form action="/register">
+    <input type="submit" value="Register" />
+</form>
+
+</div>
+
+{% endblock %}  

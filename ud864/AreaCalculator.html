@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        font-family: Arial, sans-serif;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        height: 100%;
+        position: relative;
+      }
+
+      input {
+        font-size: 12px;
+      }
+
+      h1 {
+        color: #525454;
+        font-size: 22px;
+        margin: 0 0 10px 0;
+        text-align: center;
+      }
+
+      #hide-listings,
+      #show-listings {
+        width: 48%;
+      }
+
+      hr {
+        background: #D0D7D9;
+        height: 1px;
+        margin: 20px 0 20px 0;
+        border: none;
+      }
+
+      #map {
+        bottom:0px;
+        height: 100%;
+        left: 362px;
+        position: absolute;
+        right: 0px;
+      }
+
+      .options-box {
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: 3px;
+        height: 100%;
+        line-height: 35px;
+        padding: 10px 10px 30px 10px;
+        text-align: left;
+        width: 340px;
+      }
+
+      #pano {
+        width: 200px;
+        height: 200px;
+      }
+
+      .text {
+        font-size: 12px;
+      }
+
+      #toggle-drawing {
+        width: 27%;
+        position: relative;
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="options-box">
+        <h1>Find Your New NYC Home</h1>
+        <div>
+          <input id="toggle-drawing"  type="button" value="Drawing Tools">
+          <h2 id="area">0</h2>
+        </div>
+      </div>
+      <div id="map"></div>
+    </div>
+    <script>
+      var map;
+
+      // Create a new blank array for all the listing markers.
+      var markers = [];
+
+      // This global polygon variable is to ensure only ONE polygon is rendered.
+      var polygon = null;
+
+      function initMap() {
+        // Create a styles array to use with the map.
+        var styles = [
+          {
+            featureType: 'water',
+            stylers: [
+              { color: '#19a0d8' }
+            ]
+          },{
+            featureType: 'administrative',
+            elementType: 'labels.text.stroke',
+            stylers: [
+              { color: '#ffffff' },
+              { weight: 6 }
+            ]
+          },{
+            featureType: 'administrative',
+            elementType: 'labels.text.fill',
+            stylers: [
+              { color: '#e85113' }
+            ]
+          },{
+            featureType: 'road.highway',
+            elementType: 'geometry.stroke',
+            stylers: [
+              { color: '#efe9e4' },
+              { lightness: -40 }
+            ]
+          },{
+            featureType: 'transit.station',
+            stylers: [
+              { weight: 9 },
+              { hue: '#e85113' }
+            ]
+          },{
+            featureType: 'road.highway',
+            elementType: 'labels.icon',
+            stylers: [
+              { visibility: 'off' }
+            ]
+          },{
+            featureType: 'water',
+            elementType: 'labels.text.stroke',
+            stylers: [
+              { lightness: 100 }
+            ]
+          },{
+            featureType: 'water',
+            elementType: 'labels.text.fill',
+            stylers: [
+              { lightness: -100 }
+            ]
+          },{
+            featureType: 'poi',
+            elementType: 'geometry',
+            stylers: [
+              { visibility: 'on' },
+              { color: '#f0e4d3' }
+            ]
+          },{
+            featureType: 'road.highway',
+            elementType: 'geometry.fill',
+            stylers: [
+              { color: '#efe9e4' },
+              { lightness: -25 }
+            ]
+          }
+        ];
+
+        // Constructor creates a new map - only center and zoom are required.
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.7413549, lng: -73.9980244},
+          zoom: 13,
+          styles: styles,
+          mapTypeControl: false
+        });
+
+        // Initialize the drawing manager.
+        var drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.POLYGON,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_LEFT,
+            drawingModes: [
+              google.maps.drawing.OverlayType.POLYGON
+            ]
+          }
+        });
+
+        document.getElementById('toggle-drawing').addEventListener('click', function() {
+          toggleDrawing(drawingManager);
+        });
+
+        // Add an event listener so that the polygon is captured,  call the
+        // searchWithinPolygon function. This will show the markers in the polygon,
+        // and hide any outside of it.
+        drawingManager.addListener('overlaycomplete', function(event) {
+          // First, check if there is an existing polygon.
+          // If there is, get rid of it and remove the markers
+          if (polygon) {
+            polygon.setMap(null);
+          }
+          // Switching the drawing mode to the HAND (i.e., no longer drawing).
+          drawingManager.setDrawingMode(null);
+          // Creating a new editable polygon from the overlay.
+          polygon = event.overlay;
+          polygon.setEditable(true);
+
+          var area = 0;
+
+          area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+
+          alert(area);
+
+        });
+      }
+
+
+      // This shows and hides (respectively) the drawing options.
+      function toggleDrawing(drawingManager) {
+        if (drawingManager.map) {
+          drawingManager.setMap(null);
+          // In case the user drew anything, get rid of the polygon
+          if (polygon !== null) {
+            polygon.setMap(null);
+          }
+        } else {
+          drawingManager.setMap(map);
+        }
+      }
+
+    </script>
+
+    <script async defer
+        src=
+        "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyAYHG_S8AGdwIq_k2t-lv3NW1vVBmK088I&v=3&callback=initMap">
+    </script>
+
+  </body>
+</html>

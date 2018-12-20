@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        font-family: Arial, sans-serif;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        height: 100%;
+        position: relative;
+      }
+
+      input {
+        font-size: 12px;
+      }
+
+      h1 {
+        color: #525454;
+        font-size: 22px;
+        margin: 0 0 10px 0;
+        text-align: center;
+      }
+
+      #hide-listings,
+      #show-listings {
+        width: 48%;
+      }
+
+      hr {
+        background: #D0D7D9;
+        height: 1px;
+        margin: 20px 0 20px 0;
+        border: none;
+      }
+
+      #map {
+        bottom:0px;
+        height: 100%;
+        left: 362px;
+        position: absolute;
+        right: 0px;
+      }
+
+      .options-box {
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: 3px;
+        height: 100%;
+        line-height: 35px;
+        padding: 10px 10px 30px 10px;
+        text-align: left;
+        width: 340px;
+      }
+
+      #pano {
+        width: 200px;
+        height: 200px;
+      }
+
+      #search-within-time-text {
+        width: 84%;
+      }
+
+      .text {
+        font-size: 12px;
+      }
+
+      #toggle-drawing {
+        width: 27%;
+        position: relative;
+        margin-left: 10px;
+      }
+
+      #zoom-to-area-text {
+        width: 70%;
+      }
+
+      #zoom-to-area {
+        width: 24%;
+      }
+    </style>
+  </head>
+  <body>
+      <div id="map"></div>
+    <script>
+      var map;
+
+  
+
+      function initMap() {
+        // Create a styles array to use with the map.
+        var styles = [
+          {
+            featureType: 'water',
+            stylers: [
+              { color: '#19a0d8' }
+            ]
+          },{
+            featureType: 'administrative',
+            elementType: 'labels.text.stroke',
+            stylers: [
+              { color: '#ffffff' },
+              { weight: 6 }
+            ]
+          },{
+            featureType: 'administrative',
+            elementType: 'labels.text.fill',
+            stylers: [
+              { color: '#e85113' }
+            ]
+          },{
+            featureType: 'road.highway',
+            elementType: 'geometry.stroke',
+            stylers: [
+              { color: '#efe9e4' },
+              { lightness: -40 }
+            ]
+          },{
+            featureType: 'transit.station',
+            stylers: [
+              { weight: 9 },
+              { hue: '#e85113' }
+            ]
+          },{
+            featureType: 'road.highway',
+            elementType: 'labels.icon',
+            stylers: [
+              { visibility: 'off' }
+            ]
+          },{
+            featureType: 'water',
+            elementType: 'labels.text.stroke',
+            stylers: [
+              { lightness: 100 }
+            ]
+          },{
+            featureType: 'water',
+            elementType: 'labels.text.fill',
+            stylers: [
+              { lightness: -100 }
+            ]
+          },{
+            featureType: 'poi',
+            elementType: 'geometry',
+            stylers: [
+              { visibility: 'on' },
+              { color: '#f0e4d3' }
+            ]
+          },{
+            featureType: 'road.highway',
+            elementType: 'geometry.fill',
+            stylers: [
+              { color: '#efe9e4' },
+              { lightness: -25 }
+            ]
+          }
+        ];
+
+        // Constructor creates a new map - only center and zoom are required.
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.7413549, lng: -73.9980244},
+          zoom: 13,
+          styles: styles,
+          mapTypeControl: false
+        });
+
+        var directionsService = new google.maps.DirectionsService;
+
+        var origin = 'Florence';
+
+        var destination = 'Milan';
+
+        var wayPoints = [
+          {
+            location: 'Geona',
+            stopover: true
+          },
+          {
+            location: 'Bologna',
+            stopover: true
+          },
+          {
+            location: 'Venice',
+            stopover: true
+          }
+        ];
+
+        directionsService.route({
+          origin: origin,
+          destination: destination,
+          waypoints: wayPoints,
+          travelMode: google.maps.TravelMode['DRIVING']
+        }, function(response, status) {
+          if (status === google.maps.DirectionsStatus.OK) {
+            var directionsDisplay = new google.maps.DirectionsRenderer({
+              map: map,
+              directions: response,
+              draggable: true,
+              polylineOptions: {
+                strokeColor: 'green'
+              }
+            });
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+      }
+    </script>
+
+    <script async defer
+        src=
+        "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyAYHG_S8AGdwIq_k2t-lv3NW1vVBmK088I&v=3&callback=initMap">
+    </script>
+
+  </body>
+</html>

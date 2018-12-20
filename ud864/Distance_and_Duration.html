@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+  <h2 id="distance">0</h2>
+  <h2 id="duration">0</h2>
+    <script>
+    function initMap() {
+        var distanceMatrixService = new google.maps.DistanceMatrixService;
+        var origin = '4800 El Camino Real, Los Altos, CA';
+        var destination = '2465 Latham Street, Mountain View, CA';
+        var mode = 'BICYCLING';
+
+        distanceMatrixService.getDistanceMatrix({
+          origins: [origin],
+          destinations: [destination],
+          travelMode: google.maps.TravelMode[mode],
+          unitSystem: google.maps.UnitSystem.IMPERIAL,
+        }, function(response, status) {
+          if (status !== google.maps.DistanceMatrixStatus.OK) {
+                window.alert('Error was: ' + status);
+              } else {
+                var distance = response.rows[0].elements[0].distance.text;
+                var duration = (response.rows[0].elements[0].duration.value / 60).text;
+                alert(distance);
+              }
+            });
+      }
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYHG_S8AGdwIq_k2t-lv3NW1vVBmK088I&v=3&callback=initMap">
+    </script>
+
+  </body>
+</html>
